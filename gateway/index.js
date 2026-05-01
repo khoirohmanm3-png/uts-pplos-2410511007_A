@@ -1,56 +1,46 @@
 const express = require('express');
 const axios = require('axios');
-const cors = require('cors');
-
 const app = express();
-app.use(cors());
-app.use(express.json());
-
 const PORT = 3000;
 
-// --- ROUTE ABSENSI ---
+app.use(express.json());
 
-// 1. Ambil Semua Data (GET)
-app.get('/attendance', async (req, res) => {
+const EMPLOYEE_SERVICE_URL = 'http://127.0.0.1:8000';
+const ATTENDANCE_SERVICE_URL = 'http://127.0.0.1:5002';
+
+// --- AUTH & EMPLOYEE ROUTES (Laravel) ---
+
+// Login
+app.post('/api/login', async (req, res) => {
     try {
-        const response = await axios.get('http://localhost:5002/attendance');
-        res.json(response.data);
+        const response = await axios.post(`${EMPLOYEE_SERVICE_URL}/api/login`, req.body);
+        res.status(response.status).json(response.data);
     } catch (error) {
-        res.status(500).json({ message: "Attendance Service mati" });
+        res.status(error.response?.status || 500).json(error.response?.data || { message: error.message });
     }
 });
 
-// 2. Tambah Data Baru (POST)
-app.post('/attendance', async (req, res) => {
+// Delete Employee (Fitur Baru)
+app.delete('/api/employees/:id', async (req, res) => {
     try {
-        const response = await axios.post('http://localhost:5002/attendance', req.body);
-        res.json(response.data);
+        const response = await axios.delete(`${EMPLOYEE_SERVICE_URL}/api/employees/${req.params.id}`);
+        res.status(response.status).json(response.data);
     } catch (error) {
-        res.status(500).json({ message: "Gagal mengirim data ke Attendance Service" });
+        res.status(error.response?.status || 500).json(error.response?.data || { message: error.message });
     }
 });
 
-// 3. Hapus Data (DELETE)
-app.delete('/attendance/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        const response = await axios.delete(`http://localhost:5002/attendance/${id}`);
-        res.json(response.data);
-    } catch (error) {
-        res.status(500).json({ message: "Gagal menghapus data" });
-    }
-});
+// --- ATTENDANCE ROUTES (Node.js) ---
 
-// --- ROUTE EMPLOYEE (LARAVEL) ---
-app.get('/employees', async (req, res) => {
+app.get('/api/attendance', async (req, res) => {
     try {
-        const response = await axios.get('http://localhost:8000/api/employees');
-        res.json(response.data);
+        const response = await axios.get(`${ATTENDANCE_SERVICE_URL}/api/attendance`);
+        res.status(response.status).json(response.data);
     } catch (error) {
-        res.status(500).json({ message: "Employee Service (Laravel) mati" });
+        res.status(500).json({ message: "Attendance Service Down" });
     }
 });
 
 app.listen(PORT, () => {
-    console.log(`API Gateway aktif di http://localhost:${PORT}`);
+    console.log(`Gateway running on http://localhost:${PORT}`);
 });

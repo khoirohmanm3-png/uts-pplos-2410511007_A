@@ -2,14 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-
-class EmployeeController extends Controller
+abstract class Controller
 {
-    public function index()
-    {
-        $employees = DB::table('employees')->get();
-        return response()->json($employees);
-    }
+    //
 }

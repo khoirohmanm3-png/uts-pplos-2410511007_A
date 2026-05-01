@@ -7,23 +7,19 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
+    // Pastikan nama fungsi ini persis "login" (case sensitive)
+    public function login(Request $request) 
     {
         $credentials = $request->only('email', 'password');
 
-        // Mengecek apakah email & password cocok dengan tabel users
         if (Auth::attempt($credentials)) {
-            $user = Auth::user();
-            // Membuat token (pastikan Laravel Sanctum sudah terinstal)
-            $token = $user->createToken('auth_token')->plainTextToken;
-
+            // Logika jika login sukses
             return response()->json([
-                'message' => 'Login Berhasil',
-                'access_token' => $token,
-                'token_type' => 'Bearer',
+                'message' => 'Login success',
+                'user' => Auth::user()
             ]);
         }
 
-        return response()->json(['message' => 'Email atau password salah'], 401);
+        return response()->json(['message' => 'Invalid credentials'], 401);
     }
 }

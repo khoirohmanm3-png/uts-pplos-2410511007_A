@@ -1,34 +1,42 @@
 const express = require('express');
-const mysql = require('mysql2');
-const cors = require('cors');
-
 const app = express();
-app.use(cors());
+const PORT = 5001;
+
 app.use(express.json());
 
-const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'db_attendance'
-});
+// Data User untuk keperluan testing UTS
+const USERS = [
+    { 
+        email: "khoirohman@example.com", 
+        password: "password123", 
+        name: "Khoirohman" 
+    }
+];
 
-db.connect(err => {
-    if (err) console.error('Koneksi Gagal:', err.message);
-    else console.log('Auth Service terhubung ke db_attendance');
-});
+// Endpoint Login
+app.post('/api/auth/login', (req, res) => {
+    const { email, password } = req.body;
+    
+    // Cari user berdasarkan email dan password
+    const user = USERS.find(u => u.email === email && u.password === password);
+    
+    if (user) {
+        return res.status(200).json({ 
+            status: "success", 
+            message: "Login Berhasil",
+            user: {
+                name: user.name,
+                email: user.email
+            } 
+        });
+    }
 
-app.post('/login', (req, res) => {
-    const { username, password } = req.body;
-    const query = "SELECT * FROM users WHERE username = ? AND password = ?";
-    db.query(query, [username, password], (err, results) => {
-        if (err) return res.status(500).json(err);
-        if (results.length > 0) {
-            res.json({ message: "Login Berhasil", user: results[0] });
-        } else {
-            res.status(401).json({ message: "Username atau Password salah" });
-        }
+    return res.status(401).json({ 
+        status: "error", 
+        message: "Email atau password salah" 
     });
 });
 
-app.listen(5001, () => console.log('Auth Service running on port 5001'));
+app.listen(PORT, () => {
+    console.log(`AUTH SERVICE berjalan di http://localhost:${PORT}`);
+});

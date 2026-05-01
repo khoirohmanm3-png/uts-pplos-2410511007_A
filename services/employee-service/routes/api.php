@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\EmployeeController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\EmployeeController;
 
-// Route untuk mengambil data karyawan
-Route::get('/employees', [EmployeeController::class, 'index']);
+// Satu baris ini otomatis membuat route untuk GET, POST, PUT, dan DELETE
+Route::apiResource('employees', EmployeeController::class);

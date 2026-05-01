@@ -9,9 +9,6 @@ class Employee extends Model
 {
     use HasFactory;
 
-    // Menentukan tabel secara eksplisit agar tidak salah sambung
-    protected $table = 'employees';
-
-    // Kolom yang diizinkan untuk diisi data
+    // Menentukan kolom mana saja yang boleh diisi
     protected $fillable = ['name', 'position'];
 }

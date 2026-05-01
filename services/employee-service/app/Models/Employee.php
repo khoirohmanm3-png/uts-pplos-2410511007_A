@@ -1,8 +1,17 @@
 <?php
+
 namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Employee extends Model {
-    // Wajib ada agar POST & PUT tidak error
-    protected $fillable = ['name', 'email', 'position']; 
+class Employee extends Model
+{
+    use HasFactory;
+
+    // Menentukan tabel secara eksplisit agar tidak salah sambung
+    protected $table = 'employees';
+
+    // Kolom yang diizinkan untuk diisi data
+    protected $fillable = ['name', 'position'];
 }

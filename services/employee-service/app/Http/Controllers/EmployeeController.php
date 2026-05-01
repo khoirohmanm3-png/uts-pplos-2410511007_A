@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Employee; // Memanggil model dari folder Models
+use App\Models\Employee;
 use Illuminate\Http\Request;
 
-class EmployeeController extends Controller 
+class EmployeeController extends Controller
 {
-    public function index() 
-    { 
-        return response()->json(Employee::all()); 
+    /**
+     * Menampilkan daftar semua karyawan.
+     */
+    public function index()
+    {
+        $employees = Employee::all();
+        return response()->json($employees, 200);
     }
-
-    // ... method lainnya (store, update, destroy)
 }
